@@ -1310,6 +1310,10 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError}.
      */
+    boolean UnregisterHotKey(HWND hWnd, int id);
+
+    /** @deprecated use {@link #UnregisterHotKey(HWND, int)} */
+    @Deprecated
     boolean UnregisterHotKey(Pointer hWnd, int id);
 
     /**
