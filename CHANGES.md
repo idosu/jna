@@ -9,13 +9,16 @@ Features
 --------
 * [#915](https://github.com/java-native-access/jna/pull/915): Adding interfaces to call to Cryptui and Crypt32 windows libraries and adding related structures to Wincrypt. - [@rosh89](https://github.com/rosh89).
 * [#903](https://github.com/java-native-access/jna/pull/903): Carry `HRESULT` in `c.s.j.p.win32.COM.COMException`, introduce `c.s.j.p.win32.COM.COMInvokeException` as subclass of `COMException` for exception as the result of a `IDispatch#Invoke`. The `EXECPINFO` is unwrapped into fields in the `COMInvokeException` and correctly freed. - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#822](https://github.com/java-native-access/jna/issues/822): `Native#loadLibrary` requires that the interface class passed in is an instance of Library. The runtime check can be enhanced by using a constraint generic. This breaks binary compatibility (see notes below) - [@d-noll](https://github.com/d-noll).
+* [#822](https://github.com/java-native-access/jna/issues/822): `Native#loadLibrary` requires that the interface class passed in is an instance of Library. The runtime check can be enhanced by using a constraint generic. This breaks binary compatibility (see notes below) - [@d-noll](https://github.com/d-noll).<br /><br />In a followup, the original `loadLibrary` methods were deprecated and `Native#load` methods were introduced, that hold the new generic definitions. So this change is now binary compatible.
 * [#889](https://github.com/java-native-access/jna/issues/889): The `Structure#newInstance` receive the target type as a parameter. This adds a limited generic type, so that the return type ist the target type and not a generic structure, removing the necessity to do an explizit cast - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#913](https://github.com/java-native-access/jna/issues/913): Add `@ComInterface` annotation to `com.sun.jna.platform.win32.COM.util.IConnectionPoint` to make it possible to retrieve it via `IUnknown#queryInterface` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#797](https://github.com/java-native-access/jna/issues/797): Binding `Advapi32#EnumDependendServices`, `Advapi32#EnumServicesStatusEx` and `Advapi32#QueryServiceStatus`. `W32Service#stopService` was modified to be more resilent when stopping service - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * Bind `com.sun.jna.platform.win32.Kernel32.ExpandEnvironmentStrings` and add helper method for it as `Kernel32Util#expandEnvironmentStrings` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#935](https://github.com/java-native-access/jna/pull/935): Add RegConnectRegistry to Advapi32 mappings. - [@cxcorp](https://github.com/cxcorp).
 * [#947](https://github.com/java-native-access/jna/pull/947):  Allow retrieval of `ACEs` from `com.sun.jna.platform.win32.WinNT.ACL` even if the contained `ACE` is not currently supported - [@jrobhoward](https://github.com/jrobhoward).
+* [#954](https://github.com/java-native-access/jna/pull/954): Add `c.s.j.Structure.FieldOrder` annotation to define the field order of a structures without implementing `Structure#getFieldOrder()` - [@idosu](https://github.com/idosu).
+* [#959](https://github.com/java-native-access/jna/pull/959): Added `GetProcessTimes` and `GetProcessIoCounters` to `com.sun.jna.platform.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
+* [#952](https://github.com/java-native-access/jna/issues/952): Added `CreateMutex`, `OpenMutex` and `ReleaseMutex` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -42,6 +45,7 @@ Bug Fixes
       <li>Change into the expanded directory and run `bash build.sh`.</li>
       <li>The resulting `sunos-x86.jar` is copied back to the original build system to `lib/native/sunos-x86.jar`</li>
   </ol> - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missinng the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------
@@ -63,10 +67,6 @@ Breaking Changes
 * `com.sun.jna.Native#setPreserveLastError` and `com.sun.jna.Native#getPreserveLastError`
   were removed without replacement. They were turned into NOOPs in the past.
 * `com.sun.jna.Native#getDirectByteBuffer` was replaced by `com.sun.jna.Pointer#getByteBuffer`
-* `com.sun.jna.Native#loadLibrary` methods return a `T` instance and expect
-  a `Class<T>` as parameter. `T` was unconstraint and was modified to
-  extend `com.sun.jna.Library`. This change is source compatible, but not
-  binary compatbile, so bindings need to be recompiled.
 * the parameters of the methods `gethostname`, `sethostname`, `getdomainname` 
    and `setdomainname` in the interface `com.sun.jna.platform.unix.LibCAPI`
   were changed from `(char[] name, int len)` to `(byte[] name, int len)`
